@@ -7,21 +7,24 @@ namespace Game
 	public class CharacterController2D : MonoBehaviour
 	{
 		[SerializeField] private float mJumpForce = 400f;							// Amount of force added when the player jumps.
-		[Range(0, 1)] [SerializeField] private float mCrouchSpeed = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
+		// [Range(0, 1)] [SerializeField] private float mCrouchSpeed = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
 		[Range(0, .3f)] [SerializeField] private float mMovementSmoothing = .05f;	// How much to smooth out the movement
 		[SerializeField] private bool mAirControl = false;							// Whether or not a player can steer while jumping;
 		[SerializeField] private LayerMask mWhatIsGround;							// A mask determining what is ground to the character
 		[SerializeField] private Transform mGroundCheck;							// A position marking where to check if the player is grounded.
-		[SerializeField] private Transform mCeilingCheck;							// A position marking where to check for ceilings
-		[SerializeField] private Collider2D mCrouchDisableCollider;				// A collider that will be disabled when crouching
+		// [SerializeField] private Transform mCeilingCheck;							// A position marking where to check for ceilings
+		// [SerializeField] private Collider2D mCrouchDisableCollider;				// A collider that will be disabled when crouching
 
-		private const float KGroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
+		private const float KGroundedRadius = .3f; // Radius of the overlap circle to determine if grounded
 		private bool _mGrounded;            // Whether or not the player is grounded.
 		private const float KCeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
 		private Rigidbody2D _mRigidbody2D;
 		private bool _mFacingRight = true;  // For determining which way the player is currently facing.
 		private Vector3 _mVelocity = Vector3.zero;
 
+		//If < .75 is Alive more Death for Fall
+		private float _timeOutOfGround = 0f;
+		
 		[FormerlySerializedAs("OnLandEvent")]
 		[Header("Events")]
 		[Space]
@@ -31,8 +34,8 @@ namespace Game
 		[System.Serializable]
 		public class BoolEvent : UnityEvent<bool> { }
 
-		[FormerlySerializedAs("OnCrouchEvent")] public BoolEvent onCrouchEvent;
-		private bool _mWasCrouching = false;
+		// [FormerlySerializedAs("OnCrouchEvent")] public BoolEvent onCrouchEvent;
+		// private bool _mWasCrouching = false;
 
 		private void Awake()
 		{
@@ -41,8 +44,8 @@ namespace Game
 			if (onLandEvent == null)
 				onLandEvent = new UnityEvent();
 
-			if (onCrouchEvent == null)
-				onCrouchEvent = new BoolEvent();
+			// if (onCrouchEvent == null)
+			// 	onCrouchEvent = new BoolEvent();
 		}
 
 		private void FixedUpdate()
@@ -57,56 +60,26 @@ namespace Game
 			{
 				if (t.gameObject == gameObject) continue;
 				_mGrounded = true;
-				if (!wasGrounded)
-					onLandEvent.Invoke();
+				
+				if (wasGrounded) continue;
+				
+				_timeOutOfGround = 0f;
+				onLandEvent.Invoke();
+
 			}
+
+			if (_mGrounded == false)
+				_timeOutOfGround += Time.fixedDeltaTime;
 		}
 
 
 		public void Move(float move, bool crouch, bool jump)
 		{
-			// If crouching, check to see if the character can stand up
-			if (!crouch)
-			{
-				// If the character has a ceiling preventing them from standing up, keep them crouching
-				if (Physics2D.OverlapCircle(mCeilingCheck.position, KCeilingRadius, mWhatIsGround))
-				{
-					crouch = true;
-				}
-			}
 
 			//only control the player if grounded or airControl is turned on
 			if (_mGrounded || mAirControl)
 			{
-
-				// If crouching
-				if (crouch)
-				{
-					if (!_mWasCrouching)
-					{
-						_mWasCrouching = true;
-						onCrouchEvent.Invoke(true);
-					}
-
-					// Reduce the speed by the crouchSpeed multiplier
-					move *= mCrouchSpeed;
-
-					// Disable one of the colliders when crouching
-					if (mCrouchDisableCollider != null)
-						mCrouchDisableCollider.enabled = false;
-				} else
-				{
-					// Enable the collider when not crouching
-					if (mCrouchDisableCollider != null)
-						mCrouchDisableCollider.enabled = true;
-
-					if (_mWasCrouching)
-					{
-						_mWasCrouching = false;
-						onCrouchEvent.Invoke(false);
-					}
-				}
-
+				
 				// Move the character by finding the target velocity
 				var velocity = _mRigidbody2D.velocity;
 				Vector3 targetVelocity = new Vector2(move * 10f, velocity.y);
