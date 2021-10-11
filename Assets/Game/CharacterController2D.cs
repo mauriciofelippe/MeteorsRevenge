@@ -16,20 +16,24 @@ namespace Game
 		// [SerializeField] private Collider2D mCrouchDisableCollider;				// A collider that will be disabled when crouching
 
 		private const float KGroundedRadius = .3f; // Radius of the overlap circle to determine if grounded
-		private bool _mGrounded;            // Whether or not the player is grounded.
+		public bool mGrounded;            // Whether or not the player is grounded.
 		private const float KCeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
 		private Rigidbody2D _mRigidbody2D;
 		private bool _mFacingRight = true;  // For determining which way the player is currently facing.
 		private Vector3 _mVelocity = Vector3.zero;
 
 		//If < .75 is Alive more Death for Fall
-		private float _timeOutOfGround = 0f;
+		public float timeOutOfGround = 0f;
+
+		public float distanceFromGround;
+		private float _lastGroundedPositionYaxis = 0f;
 		
 		[FormerlySerializedAs("OnLandEvent")]
 		[Header("Events")]
 		[Space]
 
 		public UnityEvent onLandEvent;
+		public UnityEvent onJumpEvent;
 
 		[System.Serializable]
 		public class BoolEvent : UnityEvent<bool> { }
@@ -48,36 +52,105 @@ namespace Game
 			// 	onCrouchEvent = new BoolEvent();
 		}
 
-		private void FixedUpdate()
+		private bool lastGrounded;
+		
+		public void FixedUpdateMe()
 		{
-			bool wasGrounded = _mGrounded;
-			_mGrounded = false;
+			bool wasGrounded = mGrounded;
+			// _mGrounded = false;
 
 			// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 			// This can be done using layers instead but Sample Assets will not overwrite your project settings.
-			var colliders = Physics2D.OverlapCircleAll(mGroundCheck.position, KGroundedRadius, mWhatIsGround);
-			foreach (var t in colliders)
-			{
-				if (t.gameObject == gameObject) continue;
-				_mGrounded = true;
-				
-				if (wasGrounded) continue;
-				
-				_timeOutOfGround = 0f;
-				onLandEvent.Invoke();
+			// var colliders = Physics2D.OverlapCircleAll(mGroundCheck.position, KGroundedRadius, mWhatIsGround);
 
+			var collider2d = Physics2D.OverlapCircle(mGroundCheck.position, KGroundedRadius, mWhatIsGround);
+
+			if (collider2d != null)
+			{
+				if (wasGrounded == false && timeOutOfGround > 0.1f)
+				{
+					timeOutOfGround = 0f;
+					distanceFromGround = _lastGroundedPositionYaxis - transform.position.y;
+					print("Distance: "+distanceFromGround+" Pos1: "+_lastGroundedPositionYaxis+" Pos2: "+transform.position.y);
+					onLandEvent.Invoke();
+				}
+				mGrounded = true;
+				lastGrounded = mGrounded;
+			}
+			else
+			{
+				distanceFromGround = 0f;
+				mGrounded = false;
 			}
 
-			if (_mGrounded == false)
-				_timeOutOfGround += Time.fixedDeltaTime;
+			if (mGrounded == false && mGrounded != lastGrounded)
+			{
+				lastGrounded = mGrounded;
+				_lastGroundedPositionYaxis = transform.position.y;
+			}
+			
+			// foreach (var t in colliders)
+			// {
+			// 	if (t.gameObject != gameObject)
+			// 	{
+			// 		_mGrounded = true;
+			// 		if (!wasGrounded)
+			// 		{
+			// 			landedCount++;
+			// 			print("Landed: "+landedCount);
+			// 			if (landedCount > 1)
+			// 			{
+			// 				landedCount = 0;
+			// 				_timeOutOfGround = 0f;		
+			// 				onLandEvent.Invoke();
+			// 			}
+			// 		}
+			// 			
+			// 	}
+			// }
+
+			if (mGrounded == false)
+				timeOutOfGround += Time.fixedDeltaTime;
 		}
+		
+		// private void FixedUpdate()
+		// {
+		// 	bool wasGrounded = _mGrounded;
+		// 	_mGrounded = false;
+		// 	
+		// 	// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
+		// 	// This can be done using layers instead but Sample Assets will not overwrite your project settings.
+		// 	var colliders = Physics2D.OverlapCircleAll(mGroundCheck.position, KGroundedRadius, mWhatIsGround);
+		// 	foreach (var t in colliders)
+		// 	{
+		// 		if (t.gameObject != gameObject)
+		// 		{
+		// 			_mGrounded = true;
+		// 			if (!wasGrounded)
+		// 			{
+		// 				landedCount++;
+		// 				print("Landed: "+landedCount);
+		// 				if (landedCount > 1)
+		// 				{
+		// 					landedCount = 0;
+		// 					_timeOutOfGround = 0f;		
+		// 					onLandEvent.Invoke();
+		// 				}
+		// 			}
+		// 				
+		// 		}
+		// 	}
+		// 	
+		// 	if (_mGrounded == false)
+		// 		_timeOutOfGround += Time.fixedDeltaTime;
+		// }
 
 
 		public void Move(float move, bool crouch, bool jump)
 		{
 
 			//only control the player if grounded or airControl is turned on
-			if (_mGrounded || mAirControl)
+			if (mGrounded || mAirControl)
 			{
 				
 				// Move the character by finding the target velocity
@@ -100,9 +173,11 @@ namespace Game
 				}
 			}
 			// If the player should jump...
-			if (!_mGrounded || !jump) return;
+			if (!mGrounded || !jump) return;
 			// Add a vertical force to the player.
-			_mGrounded = false;
+			mGrounded = false;
+			onJumpEvent.Invoke();
+			distanceFromGround += 1;
 			_mRigidbody2D.AddForce(new Vector2(0f, mJumpForce));
 		}
 
