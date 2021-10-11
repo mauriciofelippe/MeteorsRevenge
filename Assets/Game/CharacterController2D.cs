@@ -35,6 +35,8 @@ namespace Game
 		public UnityEvent onLandEvent;
 		public UnityEvent onJumpEvent;
 
+		public OneWayPlatform oneWayPlatform;
+
 		[System.Serializable]
 		public class BoolEvent : UnityEvent<bool> { }
 
@@ -75,6 +77,9 @@ namespace Game
 					onLandEvent.Invoke();
 				}
 				mGrounded = true;
+				
+				oneWayPlatform = collider2d.GetComponent<OneWayPlatform>();
+				
 				lastGrounded = mGrounded;
 			}
 			else
@@ -146,6 +151,14 @@ namespace Game
 		// }
 
 
+		public void MoveDownOneWayPlatform()
+		{
+			if (oneWayPlatform != null)
+			{
+				oneWayPlatform.TurnPlatformOff();
+			}
+		}
+		
 		public void Move(float move, bool crouch, bool jump)
 		{
 

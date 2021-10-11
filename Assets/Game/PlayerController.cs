@@ -56,7 +56,14 @@ namespace Game
             _moveX = Input.GetAxisRaw("Horizontal") * Speed;
             if (Input.GetButtonDown("Jump"))
             {
-                _jump = true;
+                if (Input.GetAxisRaw("Vertical") < 0)
+                {
+                 controller2D.MoveDownOneWayPlatform();   
+                }
+                else
+                {
+                    _jump = true;    
+                }
             }
             animator.SetBool(Walk,Mathf.Abs(_moveX)>0);
             animator.SetFloat(JumpTime, controller2D.timeOutOfGround);
