@@ -2,26 +2,50 @@ using System;
 using System.Collections;
 using Game;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
-    public static int score;
-    public static int lives;
-    public static int keys;
-    public static bool hasTorch;
-    public static bool hasSword;
-    public static bool hasHammer;
+
+    private int _score;
+    public int Score
+    {
+        get => _score;
+        set
+        {
+            _score = value;
+            print("Score: "+_score);
+        }
+    }
+    public static int Lives;
+    public static int Keys;
+    public static bool HasTorch;
+    public static bool HasSword;
+    public static bool HasHammer;
 
     public ItemManager itemManager;
 
-    public static GameManager gm;
+    public static GameManager instance;
 
     private void Awake()
     {
-        if (gm != null && gm != this)
+        if (instance != null && instance != this)
             Destroy(gameObject);
-        gm = this;
+        instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    internal void ResetGame()
+    {
+        Score = 0;
+        Lives = 3;
+        Keys = 0;
+        HasTorch = false;
+        HasSword = false;
+        HasHammer = false;
+
+        SceneManager.LoadScene(0);
     }
 
     private void Start()

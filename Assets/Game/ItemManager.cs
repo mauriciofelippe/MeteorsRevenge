@@ -10,17 +10,24 @@ namespace Game
         private void GetKey()
         {
             PlayerController.Keys++;
+            GameManager.instance.Score += 500;
         }
 
-        public void GetMushRoomRed()
+        private void GetMushRoomRed()
         {
-            
+            GameManager.instance.Score += 2000;
+        }
+
+        private void GetMushRoomPink()
+        {
+            GameManager.instance.Score += 1000;
+        }
+
+        private void FireChainWall()
+        {
+            print("Burn!@");
         }
         
-        public void GetMushRoomPink()
-        {
-            
-        }
 
         public void AddEvent(UnityEvent uevent, ItemType itemType)
         {
@@ -34,8 +41,10 @@ namespace Game
                 case ItemType.Torch:
                     break;
                 case ItemType.MushroomRed:
+                    uevent.AddListener(GetMushRoomRed);
                     break;
                 case ItemType.MushRoomPink:
+                    uevent.AddListener(GetMushRoomPink);
                     break;
                 case ItemType.Snake:
                     break;
@@ -46,6 +55,7 @@ namespace Game
                 case ItemType.Lava:
                     break;
                 case ItemType.FireChainWall:
+                    uevent.AddListener(FireChainWall);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(itemType), itemType, null);

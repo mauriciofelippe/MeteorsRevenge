@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 80406566312178008}
   - component: {fileID: 4302950096981415717}
   - component: {fileID: 7217100321505561794}
-  - component: {fileID: 4406170927431510688}
   m_Layer: 0
   m_Name: FireChainWall
   m_TagString: Untagged
@@ -46,12 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dc44bf96707ec348a6560b94a60e255, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tilemap: {fileID: 0}
+  tilemapRenderer: {fileID: 0}
+  tileMain: {x: 0, y: 0, z: 0}
   adjacentTiles:
   - {x: 0, y: 0, z: 0}
   itemType: 9
   onPlayerTouch:
     m_PersistentCalls:
       m_Calls: []
+  destroyTiles: 0
 --- !u!50 &4302950096981415717
 Rigidbody2D:
   serializedVersion: 4
@@ -86,7 +89,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 1.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -97,17 +100,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 4}
   m_EdgeRadius: 0
---- !u!114 &4406170927431510688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7922300562195961812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a7aa37fc87306c49b3629d2463ca4c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

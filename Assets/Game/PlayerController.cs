@@ -53,7 +53,7 @@ namespace Game
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
-                SceneManager.LoadScene(0);
+                GameManager.instance.ResetGame();
             }
             
             

@@ -200,7 +200,7 @@ namespace Game
 			// Switch the way the player is labelled as facing.
 			_mFacingRight = !_mFacingRight;
 
-			// Multiply the player's x local scale by -1.
+			// Multiply the player's instance local scale by -1.
 			var transform1 = transform;
 			var theScale = transform1.localScale;
 			theScale.x *= -1;
