@@ -73,7 +73,7 @@ namespace Game
 				{
 					timeOutOfGround = 0f;
 					distanceFromGround = _lastGroundedPositionYaxis - transform.position.y;
-					print("Distance: "+distanceFromGround+" Pos1: "+_lastGroundedPositionYaxis+" Pos2: "+transform.position.y);
+					// print("Distance: "+distanceFromGround+" Pos1: "+_lastGroundedPositionYaxis+" Pos2: "+transform.position.y);
 					onLandEvent.Invoke();
 				}
 				mGrounded = true;

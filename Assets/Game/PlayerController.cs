@@ -9,6 +9,8 @@ namespace Game
         [SerializeField] private CharacterController2D controller2D;
         [SerializeField] private Animator animator;
 
+        public static int Keys;
+        
         private float _moveX;
         private const float Speed = 40f;
 
@@ -28,6 +30,8 @@ namespace Game
 
             controller2D.onLandEvent.AddListener(PlayerIsNotJumping);
             controller2D.onJumpEvent.AddListener(PlayerIsJumping);
+
+            Keys = 0;
         }
 
 

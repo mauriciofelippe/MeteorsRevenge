@@ -27,7 +27,7 @@ public class CameraManager : MonoBehaviour
     {
         // playerScreenMax = new Vector2(Screen.width, Screen.height);
         playerPosOnScreen = cam.WorldToScreenPoint(player.position);
-        print(playerPosOnScreen);
+        // print(playerPosOnScreen);
 
         if (playerPosOnScreen.x < 0)
         {
