@@ -61,6 +61,7 @@
      <Compile Include="Assets\Game\Item.cs" />
      <Compile Include="Assets\Game\ItemManager.cs" />
      <Compile Include="Assets\FireChainWall.cs" />
+     <Compile Include="Assets\Game\StateMachine.cs" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>

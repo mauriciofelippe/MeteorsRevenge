@@ -58,4 +58,12 @@ public class GameManager : MonoBehaviour
         itemManager = Instantiate(itemManager);
         yield return itemManager.isActiveAndEnabled;
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetGame();
+        }
+    }
 }

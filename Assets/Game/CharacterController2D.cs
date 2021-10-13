@@ -94,63 +94,10 @@ namespace Game
 				_lastGroundedPositionYaxis = transform.position.y;
 			}
 			
-			// foreach (var t in colliders)
-			// {
-			// 	if (t.gameObject != gameObject)
-			// 	{
-			// 		_mGrounded = true;
-			// 		if (!wasGrounded)
-			// 		{
-			// 			landedCount++;
-			// 			print("Landed: "+landedCount);
-			// 			if (landedCount > 1)
-			// 			{
-			// 				landedCount = 0;
-			// 				_timeOutOfGround = 0f;		
-			// 				onLandEvent.Invoke();
-			// 			}
-			// 		}
-			// 			
-			// 	}
-			// }
-
 			if (mGrounded == false)
 				timeOutOfGround += Time.fixedDeltaTime;
 		}
-		
-		// private void FixedUpdate()
-		// {
-		// 	bool wasGrounded = _mGrounded;
-		// 	_mGrounded = false;
-		// 	
-		// 	// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
-		// 	// This can be done using layers instead but Sample Assets will not overwrite your project settings.
-		// 	var colliders = Physics2D.OverlapCircleAll(mGroundCheck.position, KGroundedRadius, mWhatIsGround);
-		// 	foreach (var t in colliders)
-		// 	{
-		// 		if (t.gameObject != gameObject)
-		// 		{
-		// 			_mGrounded = true;
-		// 			if (!wasGrounded)
-		// 			{
-		// 				landedCount++;
-		// 				print("Landed: "+landedCount);
-		// 				if (landedCount > 1)
-		// 				{
-		// 					landedCount = 0;
-		// 					_timeOutOfGround = 0f;		
-		// 					onLandEvent.Invoke();
-		// 				}
-		// 			}
-		// 				
-		// 		}
-		// 	}
-		// 	
-		// 	if (_mGrounded == false)
-		// 		_timeOutOfGround += Time.fixedDeltaTime;
-		// }
-
-
+	
 		public void MoveDownOneWayPlatform()
 		{
 			if (oneWayPlatform != null)
@@ -192,6 +139,16 @@ namespace Game
 			onJumpEvent.Invoke();
 			distanceFromGround += 1;
 			_mRigidbody2D.AddForce(new Vector2(0f, mJumpForce));
+		}
+
+		public void StopBody()
+		{
+			_mRigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
+		}
+
+		public void StartBody()
+		{
+			_mRigidbody2D.constraints = RigidbodyConstraints2D.None;
 		}
 
 
