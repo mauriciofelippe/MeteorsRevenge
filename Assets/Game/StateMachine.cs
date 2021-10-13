@@ -21,12 +21,16 @@ namespace Game
     
         public void ChangeState(CommandState newCommandState)
         {
+            if (_currentCommandState == newCommandState) return;
+            
+            _lastCommandState = _currentCommandState;
+            
             _currentCommandState?.Exit();
-            if(_currentCommandState != newCommandState)
-                _lastCommandState = _currentCommandState;
+            
             _currentCommandState = newCommandState;
+            
             lastTime = Time.realtimeSinceStartup;
-        
+            
             _currentCommandState.Enter();
         }
 

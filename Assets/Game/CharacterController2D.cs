@@ -144,11 +144,12 @@ namespace Game
 		public void StopBody()
 		{
 			_mRigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
+			
 		}
 
 		public void StartBody()
 		{
-			_mRigidbody2D.constraints = RigidbodyConstraints2D.None;
+			_mRigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 		}
 
 

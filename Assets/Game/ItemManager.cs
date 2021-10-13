@@ -25,7 +25,7 @@ namespace Game
 
         private void FireChainWall()
         {
-            print("Burn!@");
+            FindObjectOfType<PlayerController>().Die();
         }
         
 

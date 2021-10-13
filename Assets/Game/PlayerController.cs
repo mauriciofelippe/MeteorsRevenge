@@ -25,11 +25,21 @@ namespace Game
         internal readonly int DeadByFall = Animator.StringToHash("deadByFall");
 
         internal readonly StateMachine StateMachine = new StateMachine();
+        
+        internal Vector3 lastPortal = new Vector3(0,0,0);
 
 
+        private CommandState stateWalk;
+        private CommandState stateDie;
+        
         private void OnEnable()
         {
-            StateMachine.ChangeState(new Walking(this, controller2D));
+            stateWalk = new Walking(this, controller2D);
+            stateDie = new Dead(this, default);
+            //todo change this kind of death 
+            
+            StateMachine.ChangeState(stateWalk);
+            
         }
 
         private void Start()
@@ -55,7 +65,7 @@ namespace Game
             
             
             if(controller2D.distanceFromGround > MaxDistJump)
-                StateMachine.ChangeState(new Dead(this, default));
+                Die();
         }
 
         private void Update()
@@ -69,6 +79,11 @@ namespace Game
             _jump = false;
             
             controller2D.FixedUpdateMe();
+        }
+
+        public void Die()
+        {
+            StateMachine.ChangeState(stateDie);
         }
     }
 
@@ -86,7 +101,8 @@ namespace Game
 
         public override void Enter()
         {
-            
+            player.animator.Rebind();
+            player.animator.Play("PlayerIdle");
         }
 
         public override void Execute()
@@ -151,7 +167,28 @@ namespace Game
         private IEnumerator StopBody()
         {
             yield return new WaitForSecondsRealtime(.2f);
-            player.controller2D.StopBody();   
+            player.controller2D.StopBody();
+            yield return new WaitForSecondsRealtime(1.2f);
+
+            GameManager.Lives--;
+
+            if (GameManager.Lives <= 0)
+            {
+                GameManager.instance.ResetGame();
+                
+            }
+            else
+            {
+                if (player.lastPortal == Vector3.zero)
+                {
+                    player.transform.position = new Vector3(0, 3.5f, 0);
+                }
+                else
+                {
+                    player.transform.position = player.lastPortal;    
+                }
+                player.StateMachine.ChangeState(new Walking(player, player.controller2D));    
+            }
         }
 
         public override void Execute()

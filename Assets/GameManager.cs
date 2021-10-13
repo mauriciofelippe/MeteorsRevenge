@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
             print("Score: "+_score);
         }
     }
-    public static int Lives;
+    public static int Lives = 3;
     public static int Keys;
     public static bool HasTorch;
     public static bool HasSword;

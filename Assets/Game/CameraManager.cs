@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
+using Game;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
 
-    private Transform player;
+    private PlayerController player;
     private Camera cam;
     private Vector3 playerPosOnScreen = new Vector3();
 
@@ -17,7 +16,7 @@ public class CameraManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        player = GameObject.FindWithTag("Player").transform;
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         cam = GetComponent<Camera>();
         playerScreenMax = new Vector2(Screen.width, Screen.height);
     }
@@ -26,23 +25,27 @@ public class CameraManager : MonoBehaviour
     private void Update()
     {
         // playerScreenMax = new Vector2(Screen.width, Screen.height);
-        playerPosOnScreen = cam.WorldToScreenPoint(player.position);
+        playerPosOnScreen = cam.WorldToScreenPoint(player.transform.position);
         // print(playerPosOnScreen);
 
         if (playerPosOnScreen.x < 0)
         {
             transform.position = new Vector3(transform.position.x - WidthInTiles, transform.position.y, transform.position.z);
+            player.lastPortal = player.transform.position + Vector3.left;
         }
         else if(playerPosOnScreen.x > playerScreenMax.x)
         {
+            player.lastPortal = player.transform.position + Vector3.right;
             transform.position = new Vector3(transform.position.x + WidthInTiles, transform.position.y,transform.position.z);
         }
         else if(playerPosOnScreen.y < 0)
         {
+            player.lastPortal = player.transform.position + Vector3.down;
             transform.position = new Vector3(transform.position.x, transform.position.y-HeighInTiles,transform.position.z);
         }
         else if (playerPosOnScreen.y > playerScreenMax.y)
         {
+            player.lastPortal = player.transform.position + Vector3.up;
             transform.position = new Vector3(transform.position.x, transform.position.y+HeighInTiles, transform.position.z);
         }
         
