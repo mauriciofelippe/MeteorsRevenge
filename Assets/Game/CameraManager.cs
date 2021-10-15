@@ -1,3 +1,4 @@
+using System;
 using Game;
 using UnityEngine;
 
@@ -11,18 +12,19 @@ public class CameraManager : MonoBehaviour
     private Vector2 playerScreenMax = new Vector2();
     private const int WidthInTiles = 25;
     private const int HeighInTiles = 14;
-    
-    
-    // Start is called before the first frame update
-    private void Start()
+
+    private void Awake()
     {
-        // player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         cam = GetComponent<Camera>();
+
+        Application.targetFrameRate = 60;
+        Cursor.visible = false;
         
         Screen.SetResolution(1600,896,FullScreenMode.ExclusiveFullScreen);
-        playerScreenMax = new Vector2(Screen.width, Screen.height);
+        playerScreenMax = new Vector2(Screen.width, Screen.height);        
     }
 
+    
     // Update is called once per frame
     private void Update()
     {
