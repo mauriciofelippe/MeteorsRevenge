@@ -4,7 +4,7 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
 
-    private PlayerController player;
+    public PlayerController player;
     private Camera cam;
     private Vector3 playerPosOnScreen = new Vector3();
 
@@ -16,8 +16,10 @@ public class CameraManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        // player = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         cam = GetComponent<Camera>();
+        
+        Screen.SetResolution(1600,896,FullScreenMode.ExclusiveFullScreen);
         playerScreenMax = new Vector2(Screen.width, Screen.height);
     }
 

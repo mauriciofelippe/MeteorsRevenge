@@ -52,16 +52,16 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\FireChainWall.cs" />
      <Compile Include="Assets\Game\CharacterController2D.cs" />
      <Compile Include="Assets\Game\OneWayPlatform.cs" />
+     <Compile Include="Assets\Game\StateMachine.cs" />
+     <Compile Include="Assets\GameManager.cs" />
+     <Compile Include="Assets\Game\Item.cs" />
      <Compile Include="Assets\Game\CameraManager.cs" />
      <Compile Include="Assets\Game\KeyPad.cs" />
      <Compile Include="Assets\Game\PlayerController.cs" />
-     <Compile Include="Assets\GameManager.cs" />
-     <Compile Include="Assets\Game\Item.cs" />
      <Compile Include="Assets\Game\ItemManager.cs" />
-     <Compile Include="Assets\FireChainWall.cs" />
-     <Compile Include="Assets\Game\StateMachine.cs" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
