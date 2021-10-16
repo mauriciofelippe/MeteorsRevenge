@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -30,13 +31,19 @@ namespace Game
 		
 		[FormerlySerializedAs("OnLandEvent")]
 		[Header("Events")]
+		
+		public OneWayPlatform oneWayPlatform;
+
+		public bool isOnWayPlatform;
+		
 		[Space]
 
 		public UnityEvent onLandEvent;
 		public UnityEvent onJumpEvent;
 
-		public OneWayPlatform oneWayPlatform;
-
+	
+		
+		
 		[System.Serializable]
 		public class BoolEvent : UnityEvent<bool> { }
 
@@ -55,6 +62,14 @@ namespace Game
 		}
 
 		private bool lastGrounded;
+
+		// private void OnDrawGizmos()
+		// {
+		// 	Gizmos.color = Color.red;
+		// 	Gizmos.DrawWireSphere(mGroundCheck.position,KGroundedRadius);
+		// }
+
+		private Collider2D collider2d;
 		
 		public void FixedUpdateMe()
 		{
@@ -65,8 +80,9 @@ namespace Game
 			// This can be done using layers instead but Sample Assets will not overwrite your project settings.
 			// var colliders = Physics2D.OverlapCircleAll(mGroundCheck.position, KGroundedRadius, mWhatIsGround);
 
-			var collider2d = Physics2D.OverlapCircle(mGroundCheck.position, KGroundedRadius, mWhatIsGround);
+			collider2d = Physics2D.OverlapCircle(mGroundCheck.position, KGroundedRadius, mWhatIsGround);
 
+			
 			if (collider2d != null)
 			{
 				if (wasGrounded == false && timeOutOfGround > 0.1f)
@@ -77,8 +93,10 @@ namespace Game
 					onLandEvent.Invoke();
 				}
 				mGrounded = true;
-				
-				oneWayPlatform = collider2d.GetComponent<OneWayPlatform>();
+
+				isOnWayPlatform = collider2d.CompareTag("OneWay");
+
+				// oneWayPlatform = collider2d.GetComponent<OneWayPlatform>();
 				
 				lastGrounded = mGrounded;
 			}
@@ -100,9 +118,9 @@ namespace Game
 	
 		public void MoveDownOneWayPlatform()
 		{
-			if (oneWayPlatform != null)
+			if (isOnWayPlatform)
 			{
-				oneWayPlatform.TurnPlatformOff();
+				collider2d.GetComponent<OneWayPlatform>().TurnPlatformOff();
 			}
 		}
 		
@@ -133,7 +151,7 @@ namespace Game
 				}
 			}
 			// If the player should jump...
-			if (!mGrounded || !jump) return;
+			if (!mGrounded || !jump || _mRigidbody2D.velocity.y > 0) return;
 			// Add a vertical force to the player.
 			mGrounded = false;
 			onJumpEvent.Invoke();
