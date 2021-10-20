@@ -137,6 +137,8 @@ namespace Game
 				// And then smoothing it out and applying it to the character
 				_mRigidbody2D.velocity = Vector3.SmoothDamp(velocity, targetVelocity, ref _mVelocity, mMovementSmoothing);
 
+//TODO change to real physics to use effector on player.
+
 				// If the input is moving the player right and the player is facing left...
 				if (move > 0 && !_mFacingRight)
 				{
