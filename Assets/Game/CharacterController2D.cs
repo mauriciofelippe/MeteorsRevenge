@@ -7,7 +7,8 @@ namespace Game
 {
 	public class CharacterController2D : MonoBehaviour
 	{
-		[SerializeField] private float mJumpForce = 400f;							// Amount of force added when the player jumps.
+		[SerializeField] internal float speed = 10;
+		[SerializeField] internal float mJumpForce = 400f;							// Amount of force added when the player jumps.
 		// [Range(0, 1)] [SerializeField] private float mCrouchSpeed = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
 		[Range(0, .3f)] [SerializeField] private float mMovementSmoothing = .05f;	// How much to smooth out the movement
 		[SerializeField] private bool mAirControl = false;							// Whether or not a player can steer while jumping;
@@ -19,7 +20,7 @@ namespace Game
 		private const float KGroundedRadius = .3f; // Radius of the overlap circle to determine if grounded
 		public bool mGrounded;            // Whether or not the player is grounded.
 		private const float KCeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
-		private Rigidbody2D _mRigidbody2D;
+		[SerializeField] internal Rigidbody2D rigidbody2D;
 		private bool _mFacingRight = true;  // For determining which way the player is currently facing.
 		private Vector3 _mVelocity = Vector3.zero;
 
@@ -52,7 +53,7 @@ namespace Game
 
 		private void Awake()
 		{
-			_mRigidbody2D = GetComponent<Rigidbody2D>();
+			rigidbody2D = GetComponent<Rigidbody2D>();
 
 			if (onLandEvent == null)
 				onLandEvent = new UnityEvent();
@@ -124,7 +125,7 @@ namespace Game
 			}
 		}
 		
-		public void Move(float move, bool crouch, bool jump)
+		public void Move(float move, bool crouch, bool jump, bool jumpHeld)
 		{
 
 			//only control the player if grounded or airControl is turned on
@@ -132,12 +133,16 @@ namespace Game
 			{
 				
 				// Move the character by finding the target velocity
-				var velocity = _mRigidbody2D.velocity;
-				Vector3 targetVelocity = new Vector2(move * 10f, velocity.y);
+				// var velocity = rigidbody2D.velocity;
+				// Vector3 targetVelocity = new Vector2(move * 10f, velocity.y);
 				// And then smoothing it out and applying it to the character
-				_mRigidbody2D.velocity = Vector3.SmoothDamp(velocity, targetVelocity, ref _mVelocity, mMovementSmoothing);
+				//rigidbody2D.velocity = Vector3.SmoothDamp(velocity, targetVelocity, ref _mVelocity, mMovementSmoothing);
 
-//TODO change to real physics to use effector on player.
+
+				
+				
+				
+				rigidbody2D.AddForce(Vector2.right * (move * speed), ForceMode2D.Force);
 
 				// If the input is moving the player right and the player is facing left...
 				if (move > 0 && !_mFacingRight)
@@ -152,24 +157,38 @@ namespace Game
 					Flip();
 				}
 			}
+			
+			
+			if(Mathf.Abs(rigidbody2D.velocity.y) <= 0)
+				rigidbody2D.drag = Mathf.Abs(move) < 0.1f ? 40 : 10;
+			else
+			{
+				rigidbody2D.drag = 10;
+			}
+			
 			// If the player should jump...
-			if (!mGrounded || !jump || _mRigidbody2D.velocity.y > 0) return;
-			// Add a vertical force to the player.
-			mGrounded = false;
-			onJumpEvent.Invoke();
-			distanceFromGround += 1;
-			_mRigidbody2D.AddForce(new Vector2(0f, mJumpForce));
+			if (mGrounded && jump && rigidbody2D.velocity.y <= 0)
+			{
+				mGrounded = false;
+				onJumpEvent.Invoke();
+				distanceFromGround += 1;
+				rigidbody2D.AddForce(Vector2.up*mJumpForce,ForceMode2D.Impulse);
+				// Add a vertical force to the player.
+			}
+			
+			if(jumpHeld && timeOutOfGround < 0.2f)
+				rigidbody2D.AddForce(Vector2.up * (mJumpForce * 10));
 		}
 
 		public void StopBody()
 		{
-			_mRigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
+			rigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
 			
 		}
 
 		public void StartBody()
 		{
-			_mRigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+			rigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
 		}
 
 

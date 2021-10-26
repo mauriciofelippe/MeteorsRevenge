@@ -18,6 +18,7 @@ namespace Game
         private const float MaxDistJump = 2.9f;
 
         internal bool _jump = false;
+        internal bool _jumpHeld = false;
         internal readonly int Walk = Animator.StringToHash("walk");
         internal readonly int Jump = Animator.StringToHash("jump");
         internal readonly int JumpTime = Animator.StringToHash("jumpTime");
@@ -34,9 +35,13 @@ namespace Game
         
         private void OnEnable()
         {
+            InitRigidBody();
+            
             stateWalk = new Walking(this, controller2D);
             stateDie = new Dead(this, default);
             //todo change this kind of death 
+            
+            
             
             StateMachine.ChangeState(stateWalk);
             
@@ -50,6 +55,14 @@ namespace Game
             controller2D.onJumpEvent.AddListener(PlayerIsJumping);
 
             Keys = 0;
+        }
+        
+        private void InitRigidBody()
+        {
+            controller2D.rigidbody2D.gravityScale = 10;
+            controller2D.rigidbody2D.drag = 10;
+            controller2D.speed = 100;
+            controller2D.mJumpForce = 25;
         }
 
 
@@ -75,7 +88,7 @@ namespace Game
 
         private void FixedUpdate()
         {
-            controller2D.Move(_moveX * Time.fixedDeltaTime,false,_jump);
+            controller2D.Move(_moveX * Time.fixedDeltaTime,false,_jump,_jumpHeld);
             _jump = false;
             
             controller2D.FixedUpdateMe();
@@ -105,20 +118,39 @@ namespace Game
             player.animator.Play("PlayerIdle");
         }
 
+        private float held;
+        
         public override void Execute()
         {
             player._moveX = Input.GetAxisRaw("Horizontal") * PlayerController.Speed;
             
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButton("Jump"))
             {
-                if (Input.GetAxisRaw("Vertical") < 0)
+                if (player._jumpHeld == false)
                 {
-                    controller2D.MoveDownOneWayPlatform();
+                    
+                
+                    if (Input.GetAxisRaw("Vertical") < 0)
+                    {
+                        controller2D.MoveDownOneWayPlatform();
+                    }
+                    else
+                    {
+                        player._jump = true;
+                        
+                        // held += Time.deltaTime;
+                        // if (held > 0.1f)
+                        // {
+                        //     player._jumpHeld = true;
+                        //     held = 0;
+                        // }
+                    }    
                 }
-                else
-                {
-                    player._jump = true;    
-                }
+            }
+
+            if (Input.GetButtonUp("Jump"))
+            {
+                player._jumpHeld =false;
             }
             
             player.animator.SetBool(player.Walk,Mathf.Abs(player._moveX)>0);

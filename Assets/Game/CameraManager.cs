@@ -18,8 +18,10 @@ public class CameraManager : MonoBehaviour
         cam = GetComponent<Camera>();
 
         Application.targetFrameRate = 60;
-        Cursor.visible = false;
         
+#if !UNITY_EDITOR
+        Cursor.visible = false;
+#endif
         Screen.SetResolution(1600,896,FullScreenMode.ExclusiveFullScreen);
         playerScreenMax = new Vector2(Screen.width, Screen.height);        
     }
